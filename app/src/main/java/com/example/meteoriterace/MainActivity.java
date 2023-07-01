@@ -39,18 +39,19 @@ public class MainActivity extends AppCompatActivity {
 
     private GameRules gameRules = new GameRules(new Random());
 
-    Vibrator v;
+    private String gameType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        ScreenUtils.hideSystemUI(this);
         setContentView(R.layout.activity_main);
 
-        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        //v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        gameType = getIntent().getStringExtra("gameType");
+
         initViews();
         setTick();
     }
@@ -58,17 +59,32 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        startTimer();
+        //startTimer();
+        //appsResource.getInstance().startBackgroundMusic();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startTimer();
+        appsResource.getInstance().startBackgroundMusic();
 
+    }
 
     @Override
     protected void onStop() {
         super.onStop();
-        stopTimer();
+        //stopTimer();
+        //appsResource.getInstance().releaseResource();
+        //appsResource.getInstance().pausebackgroundMusic();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopTimer();
+        appsResource.getInstance().pausebackgroundMusic();
+    }
 
     private void setTick() {
 
@@ -178,11 +194,19 @@ public class MainActivity extends AppCompatActivity {
         btn_Left = findViewById(R.id.main_BTN_left);
         btn_Right = findViewById(R.id.main_BTN_right);
 
-        btn_Left.setOnClickListener(view -> moveRocket(true));
-        btn_Right.setOnClickListener(view -> moveRocket(false));
+        if(gameType.equals("buttons")) {
+            btn_Left.setOnClickListener(view -> moveRocket(true));
+            btn_Right.setOnClickListener(view -> moveRocket(false));
+        } else {
+            btn_Left.setEnabled(false);
+            btn_Right.setEnabled(false);
+            btn_Left.setVisibility(View.INVISIBLE);
+            btn_Right.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void moveRocket(boolean left) {
+
         gameRules.moveRocket(left);
         updateRocketUI();
 
@@ -195,19 +219,28 @@ public class MainActivity extends AppCompatActivity {
         colitionPlace = gameRules.getCurrentRocketLocation();
         rocketShips[colitionPlace].setImageResource(R.drawable.explosion);
         livescount--;
-        lives[livescount].setVisibility(View.INVISIBLE);
 
-        v.vibrate(DELAY);
+        try {
+            lives[livescount].setVisibility(View.INVISIBLE);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
+        /// v.vibrate(DELAY);
+        appsResource.getInstance().vibrate();
         if (livescount == 0)
             gameOver();
     }
 
     private void gameOver() {
-        onStop();
+        onPause();
         btn_Right.setEnabled(false);
         btn_Left.setEnabled(false);
-        v.cancel();
+        //v.cancel();
+        //appsResource.getInstance().releaseResource();
+        appsResource.getInstance().toast("GAME OVER");
+
+        finish();
 
     }
 

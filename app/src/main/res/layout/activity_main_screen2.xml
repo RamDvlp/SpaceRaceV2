@@ -78,7 +78,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="170dp">
+                    android:layout_height="220dp">
 
                 </View>
                 <androidx.appcompat.widget.AppCompatButton

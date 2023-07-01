@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -19,13 +20,40 @@ public class MainScreenActivity2 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        ScreenUtils.hideSystemUI(this);
         setContentView(R.layout.activity_main_screen2);
+
+
 
         initViews();
         newGame.setOnClickListener(v -> regularGame());
+        sensorGame.setOnClickListener(v -> sensoredGame());
+        Log.d("aaaa","in create main screen");
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        appsResource.getInstance().resumeBackgroundMusic();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        appsResource.getInstance().releaseResource();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appsResource.getInstance().pausebackgroundMusic();
+    }
+
+    private void sensoredGame() {
+        intent = new Intent(MainScreenActivity2.this,MainActivity.class);
+        intent.putExtra("gameType", "sensors");
+        startActivity(intent);
     }
 
     private void regularGame() {
