@@ -20,6 +20,8 @@ public class appsResource {
 
     private MediaPlayer mediaPlayer;
 
+    //private mySP mysp;
+
 
     private static appsResource mySignal;
 
@@ -28,6 +30,7 @@ public class appsResource {
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         mediaPlayer = MediaPlayer.create(context, R.raw.music_for_arcade_style_game);
 
+        //mySP.init(context);
         //startBackgroundMusic();
     }
 

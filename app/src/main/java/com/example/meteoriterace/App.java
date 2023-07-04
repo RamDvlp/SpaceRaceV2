@@ -19,6 +19,7 @@ public class App extends Application {
 
         appsResource.getInstance().startBackgroundMusic();
 
+        mySP.init(this);
 
     }
 

@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.gson.Gson;
 
 import java.util.Random;
 import java.util.Timer;
@@ -305,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void gameOver() {
+        saveScore();
         onPause();
         btn_Right.setEnabled(false);
         btn_Left.setEnabled(false);
@@ -313,7 +315,27 @@ public class MainActivity extends AppCompatActivity {
         //appsResource.getInstance().cancelVibrator();
         appsResource.getInstance().toast("GAME OVER");
 
+        loadScore();
         finish();
+
+    }
+
+    private void loadScore() {
+//TODO - temp load test, move to score activity
+        String json = mySP.getSP().readScoreEntery();
+        ScoreEntery sc;
+
+        sc = new Gson().fromJson(json,ScoreEntery.class);
+
+        Log.d("asd", sc.toString());
+
+    }
+
+    private void saveScore() {
+        ScoreEntery sc = new ScoreEntery(score);
+
+        String json = new Gson().toJson(sc);
+        mySP.getSP().writeScoreEntry(json);
 
     }
 
