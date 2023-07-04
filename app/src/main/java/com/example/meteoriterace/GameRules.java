@@ -159,4 +159,10 @@ public class GameRules {
 
 
     }
+//
+//    public void placeRocketSensor(int i) {
+//        rocket[currentRocketLocation] = NOTHING;
+//        rocket[i] = ROCKET;
+//        currentRocketLocation = i;
+//    }
 }

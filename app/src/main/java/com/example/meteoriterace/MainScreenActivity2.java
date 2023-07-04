@@ -28,8 +28,10 @@ public class MainScreenActivity2 extends AppCompatActivity {
         initViews();
         newGame.setOnClickListener(v -> regularGame());
         sensorGame.setOnClickListener(v -> sensoredGame());
-        Log.d("aaaa","in create main screen");
+        score.setOnClickListener(v -> scoreScreen());
+
     }
+
 
 
     @Override
@@ -48,6 +50,13 @@ public class MainScreenActivity2 extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         appsResource.getInstance().pausebackgroundMusic();
+    }
+
+
+    private void scoreScreen() {
+        intent = new Intent(MainScreenActivity2.this,Score.class);
+        //intent.putExtra("gameType", "sensors");
+        startActivity(intent);
     }
 
     private void sensoredGame() {

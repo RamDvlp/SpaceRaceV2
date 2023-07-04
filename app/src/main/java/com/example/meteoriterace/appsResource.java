@@ -84,6 +84,9 @@ public class appsResource {
         });
     }
 
+    public void cancelVibrator(){
+        vibrator.cancel();
+    }
 
     public void releaseResource(){
         mediaPlayer.release();

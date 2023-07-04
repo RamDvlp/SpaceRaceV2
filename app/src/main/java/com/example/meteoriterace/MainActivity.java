@@ -6,6 +6,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -20,7 +21,9 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int DELAY = 500;
+    private static final int DELAY = 500;
+    private static final int FAST_DELAY = 1000;
+    private static final float SENSOR_THRESHOLD = 3;
 
     private int livescount = 3;
     private Timer timer;
@@ -41,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
 
     private String gameType;
 
+    private Sensors mySensors;
+
+    private TimerTask timeTask;
+
+    private boolean state = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,13 +61,58 @@ public class MainActivity extends AppCompatActivity {
 
         gameType = getIntent().getStringExtra("gameType");
 
+
+        if(gameType.equals("sensors")){
+
+            mySensors = new Sensors(this, new Sensors.CallBack_ScreenTilt() {
+                @Override
+                public void leftRightTilt(float x) {
+                    if(x > 2*SENSOR_THRESHOLD)
+                            gameRules.moveRocket(true);
+                    if(x > SENSOR_THRESHOLD && x < 2*SENSOR_THRESHOLD)
+                        gameRules.moveRocket(true);
+
+                    if(x < 2*(-SENSOR_THRESHOLD))
+                        gameRules.moveRocket(false);
+                    if(x < (-SENSOR_THRESHOLD) && x > 2*(-SENSOR_THRESHOLD))
+                        gameRules.moveRocket(false);
+
+                    updateRocketUI();
+
+                }
+
+                @Override
+                public void frontTilt(float y) {
+
+
+                    Log.d("yyyy", ""+y);
+
+
+
+                        if (y < -SENSOR_THRESHOLD ) {
+                            stopTimer();
+                            startTimer(FAST_DELAY);
+                            state = true;
+                        } else {
+                            state = false;
+                        }
+
+
+                }
+            });
+
+        }
+
         initViews();
         setTick();
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
+        if(gameType.equals("sensors"))
+            mySensors.start();
         //startTimer();
         //appsResource.getInstance().startBackgroundMusic();
     }
@@ -66,7 +120,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        startTimer();
+        //if(gameType.equals("buttons"))
+            startTimer(DELAY);
         appsResource.getInstance().startBackgroundMusic();
 
     }
@@ -74,6 +129,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        if(gameType.equals("sensors"))
+            mySensors.stop();
+
         //stopTimer();
         //appsResource.getInstance().releaseResource();
         //appsResource.getInstance().pausebackgroundMusic();
@@ -92,7 +150,10 @@ public class MainActivity extends AppCompatActivity {
         gameRules.updateGameMesh();
 
         if (gameRules.isCoinColected()) {
-            score += 10;
+            if(state)
+                score += 20;
+            else
+                score += 10;
             String displayScore = String.valueOf(score);
             score_LBL.setText(displayScore);
 
@@ -133,7 +194,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void startTimer() {
+    private void startTimer(int delay) {
+
+        if(timer != null) {
+            timer.cancel();
+            timer = null;
+
+        }
 
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -146,11 +213,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
-        }, 0, DELAY);
+        },0, delay);
     }
 
     private void stopTimer() {
-        timer.cancel();
+        if(timer!=null)
+            timer.cancel();
     }
 
     private void initViews() {
@@ -207,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void moveRocket(boolean left) {
 
+
         gameRules.moveRocket(left);
         updateRocketUI();
 
@@ -219,6 +288,9 @@ public class MainActivity extends AppCompatActivity {
         colitionPlace = gameRules.getCurrentRocketLocation();
         rocketShips[colitionPlace].setImageResource(R.drawable.explosion);
         livescount--;
+
+        if(livescount<0)
+            return;
 
         try {
             lives[livescount].setVisibility(View.INVISIBLE);
@@ -238,6 +310,7 @@ public class MainActivity extends AppCompatActivity {
         btn_Left.setEnabled(false);
         //v.cancel();
         //appsResource.getInstance().releaseResource();
+        //appsResource.getInstance().cancelVibrator();
         appsResource.getInstance().toast("GAME OVER");
 
         finish();
