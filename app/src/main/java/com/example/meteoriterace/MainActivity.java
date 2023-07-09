@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                        if (y < -SENSOR_THRESHOLD ) {
+                        if (y < 0 ) {
                             stopTimer();
                             startTimer(FAST_DELAY);
                             state = true;
@@ -315,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
         //appsResource.getInstance().cancelVibrator();
         appsResource.getInstance().toast("GAME OVER");
 
-        loadScore();
+       // loadScore();
         finish();
 
     }
@@ -328,14 +328,17 @@ public class MainActivity extends AppCompatActivity {
         sc = new Gson().fromJson(json,ScoreEntery.class);
 
         Log.d("asd", sc.toString());
+        Log.d("asd", sc.getTheDate());
+        Log.d("asd", String.valueOf(sc.getScore()));
 
     }
 
     private void saveScore() {
+
         ScoreEntery sc = new ScoreEntery(score);
 
         String json = new Gson().toJson(sc);
-        mySP.getSP().writeScoreEntry(json);
+        mySP.getSP().writeScoreEntry(json,sc.getTheDate());
 
     }
 

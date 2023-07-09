@@ -4,10 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
+
+import com.google.gson.Gson;
 
 public class MainScreenActivity2 extends AppCompatActivity {
 
@@ -23,6 +22,12 @@ public class MainScreenActivity2 extends AppCompatActivity {
         ScreenUtils.hideSystemUI(this);
         setContentView(R.layout.activity_main_screen2);
 
+        //******
+        ScoreEntery sc = new ScoreEntery(100);
+
+        String json = new Gson().toJson(sc);
+        mySP.getSP().writeScoreEntry(json, sc.getTheDate());
+        //**********
 
 
         initViews();
@@ -55,6 +60,8 @@ public class MainScreenActivity2 extends AppCompatActivity {
 
     private void scoreScreen() {
         intent = new Intent(MainScreenActivity2.this,Score.class);
+
+
         //intent.putExtra("gameType", "sensors");
         startActivity(intent);
     }

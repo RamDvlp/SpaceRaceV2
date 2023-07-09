@@ -15,7 +15,7 @@ public class ScoreEntery {
     public static final String KEY_ENTERY = "ENTERY";
 
     private int score;
-    private DateTimeFormatter format;
+
     private String theDate;
 
     public ScoreEntery() {
@@ -23,6 +23,8 @@ public class ScoreEntery {
 
     public ScoreEntery(int score) {
         this.score = score;
+
+        DateTimeFormatter format;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             format = DateTimeFormatter.ofPattern("dd/MM/YYYY HH:mm");
@@ -56,7 +58,7 @@ public class ScoreEntery {
     @Override
     public String toString() {
         return
-                "score=" + score +
-                ", theDate='" + theDate ;
+                "Date: " + theDate +
+        ", score: " + score;
     }
 }
