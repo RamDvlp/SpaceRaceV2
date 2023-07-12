@@ -2,8 +2,11 @@ package com.example.meteoriterace;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.app.ActivityCompat;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
@@ -12,6 +15,8 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.bumptech.glide.Glide;
+
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.gson.Gson;
@@ -51,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean state = false;
 
+    private double lon, lat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
 
         gameType = getIntent().getStringExtra("gameType");
 
@@ -319,23 +326,29 @@ public class MainActivity extends AppCompatActivity {
         finish();
 
     }
-
-    private void loadScore() {
-//TODO - temp load test, move to score activity
-        String json = mySP.getSP().readScoreEntery();
-        ScoreEntery sc;
-
-        sc = new Gson().fromJson(json,ScoreEntery.class);
-
-        Log.d("asd", sc.toString());
-        Log.d("asd", sc.getTheDate());
-        Log.d("asd", String.valueOf(sc.getScore()));
-
-    }
+//
+//    private void loadScore() {
+////TODO - temp load test, move to score activity
+//        String json = mySP.getSP().readScoreEntery();
+//        ScoreEntery sc;
+//
+//        sc = new Gson().fromJson(json,ScoreEntery.class);
+//
+//        Log.d("asd", sc.toString());
+//        Log.d("asd", sc.getTheDate());
+//        Log.d("asd", String.valueOf(sc.getScore()));
+//
+//    }
 
     private void saveScore() {
 
-        ScoreEntery sc = new ScoreEntery(score);
+        Random rn = new Random();
+        lat = rn.nextDouble()*(-1);
+        lon = rn.nextDouble()*(-1);
+
+
+        ScoreEntery sc = new ScoreEntery(score).setLat(lat*90).setLon(lon*180);
+
 
         String json = new Gson().toJson(sc);
         mySP.getSP().writeScoreEntry(json,sc.getTheDate());

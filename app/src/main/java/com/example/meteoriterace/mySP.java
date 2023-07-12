@@ -23,11 +23,11 @@ public class mySP {
 
     private ArrayList<ScoreEntery> allScores;
 
-    Stack<String> allKeys;
+    private ArrayList<String> allKeys;
 
     private mySP(Context context) {
         this.pref = context.getApplicationContext().getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-        allKeys = new Stack<String>();
+        allKeys = new ArrayList<>();
     }
 
     public static void init(Context context) {
@@ -42,15 +42,17 @@ public class mySP {
     }
 
     public void writeScoreEntry(String scoreEntery, String theDate) {
-        allKeys.push(theDate);
+        allKeys.add(theDate);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(theDate, scoreEntery);
         editor.apply();
     }
 
-    public String readScoreEntery() {
-        String entery = pref.getString(allKeys.pop(), DEF_VALUE);
-        return entery;
+    public ScoreEntery readScoreEntery() {
+        String entery = pref.getString(allKeys.iterator().next(), DEF_VALUE);
+
+        ScoreEntery sc = new Gson().fromJson(entery,ScoreEntery.class);
+        return sc;
 
     }
 
@@ -58,9 +60,8 @@ public class mySP {
 
         Map<String, ?> allEntries = pref.getAll();
 
-        int size = allEntries.size();
         allScores = new ArrayList<ScoreEntery>();
-        int i = 0;
+
 
         // Iterate over the entries and display them
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
@@ -68,14 +69,15 @@ public class mySP {
 
             // Check if the key matches the desired pattern
             if (allKeys.contains(key)) {
-                ScoreEntery sc;
-                sc = new Gson().fromJson((String) entry.getValue(),ScoreEntery.class);
+
+
+                ScoreEntery sc = new Gson().fromJson((String) entry.getValue(),ScoreEntery.class);
 
                 //Object value = entry.getValue();
                 // Process the entry as needed
 
                     allScores.add(sc);
-                    i++;
+
                    // Toast.makeText(this, "Key: " + key + ", Value: " + intValue, Toast.LENGTH_SHORT).show();
                 }
                 // Add more conditions for other data types if needed

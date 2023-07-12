@@ -26,6 +26,9 @@ public class ListFragment extends Fragment {
 
     private ArrayList<String> data;
 
+    private Location_Callback location_callback;
+
+    private ScoreEntery s[];
 
     @Nullable
     @Override
@@ -44,16 +47,21 @@ public class ListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(container.getContext(), position + " - " + data.get(position), Toast.LENGTH_SHORT).show();
+                location_callback.setLocationOnMap(s[position].getLat(),s[position].getLon());
             }
         });
 
         return view;
     }
 
+    public void setLocation_callback(Location_Callback location_callback){
+        this.location_callback = location_callback;
+    }
+
     private List getListItems() {
 
         data = new ArrayList<String>();
-        ScoreEntery s[] = mySP.getSP().readAll();
+        s = mySP.getSP().readAll();
         for(ScoreEntery se : s){
             data.add(se.toString());
         }

@@ -16,6 +16,29 @@ public class ScoreEntery {
 
     private int score;
 
+    private double lat;
+    private double lon;
+
+
+
+    public double getLat() {
+        return lat;
+    }
+
+    public ScoreEntery setLat(double lat) {
+        this.lat = lat;
+        return this;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public ScoreEntery setLon(double lon) {
+        this.lon = lon;
+        return this;
+    }
+
     private String theDate;
 
     public ScoreEntery() {
@@ -58,7 +81,7 @@ public class ScoreEntery {
     @Override
     public String toString() {
         return
-                "Date: " + theDate +
+                theDate +
         ", score: " + score;
     }
 }

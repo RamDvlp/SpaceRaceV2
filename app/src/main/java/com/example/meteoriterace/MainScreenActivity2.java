@@ -23,7 +23,7 @@ public class MainScreenActivity2 extends AppCompatActivity {
         setContentView(R.layout.activity_main_screen2);
 
         //******
-        ScoreEntery sc = new ScoreEntery(100);
+        ScoreEntery sc = new ScoreEntery(100).setLon(0).setLat(0);
 
         String json = new Gson().toJson(sc);
         mySP.getSP().writeScoreEntry(json, sc.getTheDate());
